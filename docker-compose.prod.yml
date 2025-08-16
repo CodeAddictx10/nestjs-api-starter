@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: .
+      target: production
+    container_name: api
+    restart: unless-stopped
+    expose:
+      - 3000
+    networks:
+      - web
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api.rule=PathPrefix(`/api`)'
+      - 'traefik.http.routers.api.entrypoints=web'
+      - 'traefik.http.services.api.loadbalancer.server.port=3000'
+      - 'traefik.http.middlewares.api-strip.stripprefix.prefixes=/api'
+      - 'traefik.http.routers.api.middlewares=api-strip'
+networks:
+  web:
+    external: true
